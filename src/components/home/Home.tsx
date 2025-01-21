@@ -11,13 +11,14 @@ const Home = () => {
   const location = useLocation();
   const navigate = useNavigate()
   const name = new URLSearchParams(location.search).get('name');
-  const id = new URLSearchParams(location.search).get('id');
+  const employeeid = new URLSearchParams(location.search).get('employeeid');
+  const unsignedid = new URLSearchParams(location.search).get('unsignedid');
 
   useEffect(()=>{
-    if(!name || !id){
+    if(!name || !employeeid || !unsignedid){
       navigate('/404')
     }
-  },[name,id,navigate])
+  },[name,employeeid,unsignedid,navigate])
   return (<div className="bg-mariBg bg-top bg-[#F5F5FB] lg:pb-24 lg:px-[6.94vw]">
     <header className="text-center lg:pt-7 lg:pb-9  text-black-100 font-bold font-montserrat text-[1.7vw]">
     Payslip Generation
@@ -32,7 +33,7 @@ const Home = () => {
       try {
         setLoading(true)
         toast.loading('Submitting', {toastId : 'submit'})
-        await axios.get(`/payroll/signpayslip/${id}`)
+        await axios.get(`/payroll/signpayslip/${unsignedid}`)
         setTimeout(()=>{
           setLoading(false)
           toast.update('submit', {render: "Submitted Successfully, check email for your updated payslip", type: "success", isLoading: false, autoClose : 3000});
@@ -51,7 +52,7 @@ const Home = () => {
             Employee Name: <span className="text-black-Title-Text font-bold">{name ?? "NOT FOUND"}</span>
           </div>
           <div className="font-montserrat uppercase lg:text-[1.388vw]">
-          Employee ID: <span className="text-black-Title-Text font-bold"> {id ?? "NOT FOUND"}</span>
+          Employee ID: <span className="text-black-Title-Text font-bold"> {employeeid ?? "NOT FOUND"}</span>
           </div>
         </div>
         <div className="bg-white lg:py-8  lg:px-10 font-poppins lg:text-[1.1vw]">
