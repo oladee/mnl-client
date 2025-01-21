@@ -1,9 +1,23 @@
 import { ErrorMessage, Form, Formik } from "formik"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import * as Yup from "yup"
+import {  useLocation, useNavigate } from 'react-router-dom';
+import axios from "axios";
+import { toast } from "react-toastify";
+
 
 const Home = () => {
   const [loading, setLoading] = useState(false)
+  const location = useLocation();
+  const navigate = useNavigate()
+  const name = new URLSearchParams(location.search).get('name');
+  const id = new URLSearchParams(location.search).get('id');
+
+  useEffect(()=>{
+    if(!name || !id){
+      navigate('/404')
+    }
+  },[name,id,navigate])
   return (<div className="bg-mariBg bg-top bg-[#F5F5FB] lg:pb-24 lg:px-[6.94vw]">
     <header className="text-center lg:pt-7 lg:pb-9  text-black-100 font-bold font-montserrat text-[1.7vw]">
     Payslip Generation
@@ -14,18 +28,30 @@ const Home = () => {
       .required("The terms and conditions must be accepted.")
       .oneOf([true], "The terms and conditions must be accepted."),
     })}
-    onSubmit={()=>{
-
+    onSubmit={async()=>{
+      try {
+        setLoading(true)
+        toast.loading('Submitting', {toastId : 'submit'})
+        await axios.get(`/payroll/signpayslip/${id}`)
+        setTimeout(()=>{
+          setLoading(false)
+          toast.update('submit', {render: "Submitted Successfully, check email for your updated payslip", type: "success", isLoading: false, autoClose : 3000});
+        },1000)
+      } catch (error) {
+        toast.error("An error occured, action not allowed")
+        console.log(error)
+      }
+      
     }}
     >
     {
       ({setFieldValue, isValid, dirty})=>(<Form>
         <div className="bg-[#B49B12] flex items-center gap-10 justify-center lg:py-12">
           <div className="font-montserrat uppercase lg:text-[1.388vw]">
-            Employee Name: <span className="text-black-Title-Text font-bold"> Oludare Temidayo-Esosa</span>
+            Employee Name: <span className="text-black-Title-Text font-bold">{name ?? "NOT FOUND"}</span>
           </div>
           <div className="font-montserrat uppercase lg:text-[1.388vw]">
-          Employee ID: <span className="text-black-Title-Text font-bold"> MNL/YKL/55</span>
+          Employee ID: <span className="text-black-Title-Text font-bold"> {id ?? "NOT FOUND"}</span>
           </div>
         </div>
         <div className="bg-white lg:py-8  lg:px-10 font-poppins lg:text-[1.1vw]">

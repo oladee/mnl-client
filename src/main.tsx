@@ -5,6 +5,7 @@ import './index.css'
 import Layout from './Layout.tsx'
 import Home from './components/home/Home.tsx'
 import axios from 'axios'
+import NotFound from './components/NotFound.tsx'
 axios.defaults.baseURL = 'https://mariteamapi.denateonlineservice.com'
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
       },
 
     ]
+  },
+  {
+    path : '/404',
+    element : <NotFound />,
   }
 ])
 
